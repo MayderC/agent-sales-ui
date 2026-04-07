@@ -1,0 +1,10 @@
+{
+  "api": {
+    "baseUrl": "http://localhost:3030",
+    "tenantId": "test",
+    "authToken": "dummy-token"
+  },
+  "campaign": {
+    "callNamePrefix": "Church Sales Outreach"
+  }
+}

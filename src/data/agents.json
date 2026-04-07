@@ -1,0 +1,15 @@
+{
+  "agents": [
+    {
+      "id": "agent_1501kmnjb2eseh7r2w81s00efwz5",
+      "name": "Church Sales Agent",
+      "agent_phone_number_id": "phnum_9901khrwz1xaf2c95zcx5c9hra2r",
+      "versions": [
+        {
+          "id": "agtbrch_4601kmzvpw2kf1abxpt9bfepxwe5",
+          "name": "v1 - Initial Release"
+        }
+      ]
+    }
+  ]
+}

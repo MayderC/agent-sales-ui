@@ -1,0 +1,61 @@
+import type { Contact } from '../types';
+
+export const mockProfiles: Contact[] = [
+  {
+    id: "recipient-1",
+    name: "Jhon Miller",
+    company: "Harvest Fellowship Church",
+    email: "",
+    phone: "+1000000000",
+    context: "Just completed a $1.2M sanctuary renovation...",
+    status: "new",
+    COMPANY_NAME: "Ministry Solutions AI",
+    CHURCH_NAME: "Harvest Fellowship Church",
+    CITY_STATE: "Austin, TX",
+    DENOMINATION: "Non-denominational",
+    ATTENDANCE: 320,
+    PASTOR_NAME: "Jhon Miller",
+    ADDITIONAL_RESEARCH_NOTES: "Just completed a $1.2M sanctuary renovation...",
+    MULTI_CAMPUS: false,
+    ATTEMPT: 1,
+    VOICE_MESSAGE: "Please inform them about the new sanctuary renovation project."
+  },
+  {
+    id: "recipient-2",
+    name: "Jhon Miller",
+    company: "Harvest Fellowship Church",
+    email: "",
+    phone: "+100000000",
+    context: "Just completed a $1.2M sanctuary renovation...",
+    status: "new",
+    COMPANY_NAME: "Ministry Solutions AI",
+    CHURCH_NAME: "Harvest Fellowship Church",
+    CITY_STATE: "Austin, TX",
+    DENOMINATION: "Non-denominational",
+    ATTENDANCE: 320,
+    PASTOR_NAME: "Jhon Miller",
+    ADDITIONAL_RESEARCH_NOTES: "Just completed a $1.2M sanctuary renovation...",
+    MULTI_CAMPUS: false,
+    ATTEMPT: 1,
+    VOICE_MESSAGE: "Please inform them about the new sanctuary renovation project."
+  },
+  {
+    id: "recipient-3",
+    name: "Jhon Miller",
+    company: "Harvest Fellowship Church",
+    email: "",
+    phone: "+10000000",
+    context: "Just completed a $1.2M sanctuary renovation...",
+    status: "new",
+    COMPANY_NAME: "Ministry Solutions AI",
+    CHURCH_NAME: "Harvest Fellowship Church",
+    CITY_STATE: "Austin, TX",
+    DENOMINATION: "Non-denominational",
+    ATTENDANCE: 320,
+    PASTOR_NAME: "Jhon Miller",
+    ADDITIONAL_RESEARCH_NOTES: "Just completed a $1.2M sanctuary renovation...",
+    MULTI_CAMPUS: false,
+    ATTEMPT: 1,
+    VOICE_MESSAGE: "Please inform them about the new sanctuary renovation project."
+  }
+];
