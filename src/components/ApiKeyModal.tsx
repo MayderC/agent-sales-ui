@@ -16,7 +16,8 @@ export function ApiKeyModal({ onSave }: ApiKeyModalProps) {
 
     setStatus('loading');
     try {
-      const res = await fetch(`${appConfig.api.baseUrl}/tools/auth/validate`, {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL ?? appConfig.api.baseUrl;
+      const res = await fetch(`${baseUrl}/tools/auth/validate`, {
         headers: { 'x-api-key': key },
       });
       if (res.ok) {

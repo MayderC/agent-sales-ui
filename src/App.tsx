@@ -12,7 +12,7 @@ import appConfig from './data/config.json'
 import './index.css'
 import { useEffect } from 'react'
 
-const API_BASE_URL = appConfig.api.baseUrl
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? appConfig.api.baseUrl
 const TENANT_ID = appConfig.api.tenantId
 
 async function fetchWithAuth(path: string, options: RequestInit = {}) {
