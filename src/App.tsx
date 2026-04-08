@@ -4,6 +4,7 @@ import { AddContact } from './components/AddContact'
 import { CallAgent } from './components/CallAgent'
 import { BatchConfirmModal } from './components/BatchConfirmModal'
 import { WebhookViewer } from './components/WebhookViewer'
+import { ApiKeyModal } from './components/ApiKeyModal'
 import type { WebhookEvent } from './components/WebhookViewer'
 import type { Contact } from './types'
 import { mockProfiles } from './data/mockProfiles'
@@ -12,10 +13,12 @@ import appConfig from './data/config.json'
 import './index.css'
 import { useEffect } from 'react'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? appConfig.api.baseUrl
+const API_KEY_STORAGE_KEY = ''
+
+const API_BASE_URL = appConfig.api.baseUrl
 const TENANT_ID = appConfig.api.tenantId
 
-async function fetchWithAuth(path: string, options: RequestInit = {}) {
+async function fetchWithAuth(path: string, options: RequestInit = {}, apiKey?: string) {
   const method = (options.method ?? 'GET').toUpperCase();
   const isWrite = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method);
 
@@ -24,6 +27,7 @@ async function fetchWithAuth(path: string, options: RequestInit = {}) {
     'x-tenant-id': TENANT_ID,
     'Authorization': `Bearer ${appConfig.api.authToken}`,
     ...(isWrite ? { 'idempotency-key': crypto.randomUUID() } : {}),
+    ...(apiKey ? { 'x-api-key': apiKey } : {}),
     ...(options.headers as Record<string, string>),
   }
 
@@ -53,6 +57,12 @@ function App() {
   const [webhookEvents, setWebhookEvents] = useState<WebhookEvent[]>([])
   const [showBatchConfirm, setShowBatchConfirm] = useState(false)
   const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set())
+  const [apiKey, setApiKey] = useState<string | null>(() => localStorage.getItem(API_KEY_STORAGE_KEY))
+
+  const handleSaveApiKey = (key: string) => {
+    localStorage.setItem(API_KEY_STORAGE_KEY, key)
+    setApiKey(key)
+  }
 
   // Load initial contacts from mock data
   useEffect(() => {
@@ -119,15 +129,15 @@ function App() {
           branch_id: selectedVersionId,
           dynamic_variables: dynamicVars
         })
-      })
+      }, apiKey ?? undefined)
 
       alert(`Call initiated successfully for ${contact.name}!`)
-      
+
       // Update status visually
-      setContacts(prev => prev.map(c => 
+      setContacts(prev => prev.map(c =>
         c.id === contactId ? { ...c, status: 'contacted' as const } : c
       ))
-      
+
       if (selectedContact && selectedContact.id === contactId) {
         setSelectedContact({ ...selectedContact, status: 'contacted' })
       }
@@ -169,7 +179,7 @@ function App() {
             }
           }))
         })
-      })
+      }, apiKey ?? undefined)
 
       setContacts(prev => prev.map(c =>
         confirmedContacts.find(cc => cc.id === c.id) ? { ...c, status: 'contacted' as const } : c
@@ -191,22 +201,22 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col font-sans">
+      {!apiKey && <ApiKeyModal onSave={handleSaveApiKey} />}
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 m-0">AI Sales Agent Platform</h1>
             <p className="mt-1 flex items-center text-sm text-gray-500">
-              <span className={`w-2 h-2 rounded-full mr-2 ${
-                isLoading || isBatchLoading ? 'bg-yellow-400 animate-pulse' :
+              <span className={`w-2 h-2 rounded-full mr-2 ${isLoading || isBatchLoading ? 'bg-yellow-400 animate-pulse' :
                 isConnected === null ? 'bg-gray-300 animate-pulse' :
-                isConnected ? 'bg-green-500' : 'bg-red-500'
-              }`}></span>
+                  isConnected ? 'bg-green-500' : 'bg-red-500'
+                }`}></span>
               {isLoading || isBatchLoading ? 'Processing...' :
-               isConnected === null ? 'Connecting...' :
-               isConnected ? 'API Connected' : 'API Offline — check backend on :3030'}
+                isConnected === null ? 'Connecting...' :
+                  isConnected ? 'API Connected' : 'API Offline — check backend on :3030'}
             </p>
           </div>
-          
+
           <nav className="flex items-center gap-2">
             {/* Agent selector */}
             <select
@@ -249,8 +259,8 @@ function App() {
                 >
                   {isBatchLoading ? (
                     <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                     </svg>
                   ) : (
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -277,21 +287,19 @@ function App() {
         <div className="flex gap-1 mb-4 bg-gray-100 rounded-lg p-1 w-fit">
           <button
             onClick={() => setActiveTab('contacts')}
-            className={`px-4 py-1.5 text-sm font-semibold rounded-md transition-colors ${
-              activeTab === 'contacts'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
+            className={`px-4 py-1.5 text-sm font-semibold rounded-md transition-colors ${activeTab === 'contacts'
+              ? 'bg-white text-gray-900 shadow-sm'
+              : 'text-gray-500 hover:text-gray-700'
+              }`}
           >
             Contacts
           </button>
           <button
             onClick={() => setActiveTab('results')}
-            className={`px-4 py-1.5 text-sm font-semibold rounded-md transition-colors flex items-center gap-1.5 ${
-              activeTab === 'results'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
+            className={`px-4 py-1.5 text-sm font-semibold rounded-md transition-colors flex items-center gap-1.5 ${activeTab === 'results'
+              ? 'bg-white text-gray-900 shadow-sm'
+              : 'text-gray-500 hover:text-gray-700'
+              }`}
           >
             Call Results
             {webhookEvents.length > 0 && (
