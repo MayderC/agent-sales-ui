@@ -15,7 +15,7 @@ import { useEffect } from 'react'
 
 const API_KEY_STORAGE_KEY = ''
 
-const API_BASE_URL = appConfig.api.baseUrl
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string
 const TENANT_ID = appConfig.api.tenantId
 
 async function fetchWithAuth(path: string, options: RequestInit = {}, apiKey?: string) {
